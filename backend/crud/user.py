@@ -30,6 +30,7 @@ class UserCRUD:
     async def create_user(self, user: user_schema.Register) -> user_schema.Base:
         db_user = UserModels(
             username=user.username,
+            email=user.email,
             password=get_password_hash(user.password),
             birthday=user.birthday,
         )
