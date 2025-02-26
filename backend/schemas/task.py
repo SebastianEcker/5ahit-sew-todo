@@ -4,9 +4,9 @@ from pydantic import BaseModel
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .user import User
+    from .user import UserBase
 
-from .category import Category
+from .category import CategoryBase
 
 class TaskBase(BaseModel):
     title: str
@@ -24,8 +24,8 @@ class Task(TaskBase):
     id: int
     completed: bool
     user_id: int
-    category: Category
-    user: 'User'
+    category: CategoryBase | None = None
+    user: 'UserBase' = None
     class Config:
         orm_mode = True
 

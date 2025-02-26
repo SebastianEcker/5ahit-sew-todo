@@ -10,6 +10,7 @@ app.include_router(auth.router, prefix="/api")
 app.include_router(user.router, prefix="/api")
 app.include_router(me.router, prefix="/api")
 app.include_router(category.router, prefix="/api")
+app.include_router(task.router, prefix="/api")
 
 origins = [
     "http://localhost:5173",

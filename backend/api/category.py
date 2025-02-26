@@ -11,8 +11,24 @@ router = APIRouter(prefix="/categories", tags=["categories"])
 
 
 @router.get("", response_model=list[Category], status_code=200)
-async def get_categories(db: CategoryCRUD = Depends(get_category_crud)):
-    return await db.get_categories()
+async def get_categories(
+    skip: int = 0, 
+    limit: int = 10,
+    sort_by_name: str = "asc",
+    db: CategoryCRUD = Depends(get_category_crud), 
+    current_user: User = Depends(get_current_user)
+    ):
+    return await db.get_categories(skip, limit, sort_by_name)
+
+@router.get("/user", response_model=list[Category], status_code=200)
+async def get_categories_by_user(
+    skip: int = 0, 
+    limit: int = 10,
+    sort_by_name: str = "asc",
+    db: CategoryCRUD = Depends(get_category_crud), 
+    current_user: User = Depends(get_current_user)
+    ):
+    return await db.get_categories_by_user(current_user.id, skip, limit, sort_by_name)
 
 @router.get("/{category_id}", response_model=Category, status_code=200)
 async def get_category_by_id(category_id: int, db: CategoryCRUD = Depends(get_category_crud)):
