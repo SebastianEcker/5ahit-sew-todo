@@ -10,11 +10,11 @@ from setting.config import get_settings
 settings = get_settings()
 
 
-async def validate_user(username: str, password: str):
+async def validate_user(username_or_email: str, password: str):
     async with async_session() as session:
         async with session.begin():
             db = UserCRUD(session)
-            user = await db.get_user_by_username(username=username)
+            user = await db.get_user_by_username(username_or_email=username_or_email)
             if not user:
                 return False
 
@@ -46,7 +46,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     async with async_session() as session:
         async with session.begin():
             db = UserCRUD(session)
-            user = await db.get_user_by_username(username=username)
+            user = await db.get_user_by_username(username_or_email=username)
             if user is None:
                 raise credentials_exception
             return user

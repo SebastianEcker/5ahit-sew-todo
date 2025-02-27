@@ -92,12 +92,16 @@ class TaskCRUD:
         await self.db_session.execute(stmt)
 
     async def update_task_completed(self, id: int):
-        await self.get_task_by_id(id)
-
+        task: Task = await self.get_task_by_id(id)
+        is_completed = True
+        
+        if task.completed: 
+            is_completed = False
+    
         stmt = (
             update(TaskModels)
             .where(TaskModels.id == id)
-            .values(completed=True)
+            .values(completed=is_completed)
         )
         stmt.execution_options(synchronize_session="fetch")
         await self.db_session.execute(stmt)

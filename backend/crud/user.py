@@ -15,8 +15,10 @@ class UserCRUD:
     def __init__(self, db_session: AsyncSession = None):
         self.db_session = db_session
 
-    async def get_user_by_username(self, username: str):
-        stmt = select(UserModels).where(UserModels.username == username)
+    async def get_user_by_username(self, username_or_email: str):
+        stmt = select(UserModels).where(
+            (UserModels.username == username_or_email) | (UserModels.email == username_or_email)
+        )
         result = await self.db_session.execute(stmt)
         user = result.scalars().first()
         return user
