@@ -10,11 +10,11 @@ class CategoryModels(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(nullable=False)
     color: Mapped[str] = mapped_column(String(7), nullable=False)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete='CASCADE'), nullable=False)
     create_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.now(timezone.utc))
 
     user: Mapped['UserModels'] = relationship(back_populates='categories') # type: ignore
-    tasks: Mapped['TaskModels'] = relationship( back_populates='category', cascade='all, delete') # type: ignore
+    tasks: Mapped['TaskModels'] = relationship(back_populates='category', cascade='all, delete-orphan', passive_deletes=True) # type: ignore
 
     def __repr__(self) -> str:
         return f"<CategoryModels(id={self.id}, name={self.name}, color={self.color}, tasks={self.tasks}), user={self.user}>"

@@ -17,8 +17,8 @@ class UserModels(Base):
     create_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.now(timezone.utc))
     last_login: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.now(timezone.utc))
 
-    tasks: Mapped[list["TaskModels"]] = relationship(back_populates='user', cascade='all, delete') # type: ignore
-    categories: Mapped[list["CategoryModels"]] = relationship(back_populates='user', cascade='all, delete') # type: ignore
+    tasks: Mapped[list["TaskModels"]] = relationship(back_populates='user', cascade='all, delete-orphan', passive_deletes=True) # type: ignore
+    categories: Mapped[list["CategoryModels"]] = relationship(back_populates='user', cascade='all, delete-orphan', passive_deletes=True) # type: ignore
 
     def __repr__(self) -> str:
         return f"<UserModels(id={self.id}, username={self.username}, password={self.password}, email={self.email}, birthday={self.birthday})>"

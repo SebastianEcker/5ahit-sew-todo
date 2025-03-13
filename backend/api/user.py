@@ -18,7 +18,7 @@ async def get_users(db: UserCRUD = Depends(get_user_crud)):
 async def register(
     new_user: user_schema.Register, db: UserCRUD = Depends(get_user_crud)
 ):
-    db_user = await db.get_user_by_username(username=new_user.username)
+    db_user = await db.get_user_by_username(new_user.username)
     if db_user:
         raise HTTPException(status_code=409, detail="Username already registered")
     await db.create_user(new_user)

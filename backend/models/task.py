@@ -4,8 +4,6 @@ from sqlalchemy import ForeignKey, DateTime
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 from database.config import Base
 
-
-
 # Create User class
 class TaskModels(Base):
     __tablename__ = "tasks"
@@ -15,8 +13,8 @@ class TaskModels(Base):
     description: Mapped[str]
     end_date: Mapped[datetime]
     completed: Mapped[bool] = mapped_column(default=False)
-    category_id: Mapped[int] = mapped_column(ForeignKey("categories.id"))
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    category_id: Mapped[int] = mapped_column(ForeignKey("categories.id", ondelete="CASCADE"), nullable=False)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     create_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.now(timezone.utc))
 
     user: Mapped['UserModels'] = relationship(back_populates='tasks') # type: ignore
