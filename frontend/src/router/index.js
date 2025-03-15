@@ -1,4 +1,4 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import ProfileView from '../views/ProfileView.vue'
 import LoginView from '../views/LoginView.vue'
@@ -6,6 +6,8 @@ import RegisterView from '../views/RegisterView.vue'
 import LogoutView from '../views/LogoutView.vue'
 import RefreshView from '../views/RefreshView.vue'
 import { useAuthStore } from '../store/auth'
+import CategoriesView from '../views/CategoriesView.vue'
+import UserView from '../views/UserView.vue'
 
 const routes = [
     {
@@ -30,6 +32,19 @@ const routes = [
         meta: { requiresAuth: true },
     },
     {
+        path: '/categories',
+        name: 'Categories',
+        component: CategoriesView,
+        meta: { requiresAuth: true },
+    },
+    {
+        path: '/users',
+        name: 'Users',
+        component: UserView,
+        meta: { requiresAuth: true },
+
+    },
+    {
         path: '/logout',
         name: 'Logout',
         component: LogoutView,
@@ -42,7 +57,7 @@ const routes = [
 ]
 
 const router = createRouter({
-    history: createWebHashHistory(),
+    history: createWebHistory(),
     routes, // short for `routes: routes`
 })
 

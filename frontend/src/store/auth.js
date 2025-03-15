@@ -53,8 +53,8 @@ export const useAuthStore = defineStore('auth', () => {
                 console.log(Date.now());    
 
                 if (isAuthenticated.value){
-                    router.push('/profile');
-                    console.log('pushed to profile');
+                    router.push('/');
+                    console.log('pushed to home');
                 }
 
             }, 1000);
@@ -91,7 +91,7 @@ export const useAuthStore = defineStore('auth', () => {
 
             dialogStore.setSuccess({
                 title: 'Refresh Success',
-                firstLine: 'Redirecting to profile page',
+                firstLine: 'Redirecting to home page',
                 secondLine: 'This dialog will close in 1 seconds'
             });
         })
@@ -109,8 +109,8 @@ export const useAuthStore = defineStore('auth', () => {
         .finally( () => {
             setTimeout(() => {
                 if (isAuthenticated.value){
-                    router.push('/profile');
-                    console.log('pushed to profile');
+                    router.push('/');
+                    console.log('pushed to home');
                 }
                 else{
                     router.push('/login');
@@ -140,8 +140,8 @@ export const useAuthStore = defineStore('auth', () => {
         .finally( () => {
             
             if (isAuthenticated.value){
-                router.push('/profile');
-                console.log('pushed to profile');
+                router.push('/');
+                console.log('pushed to home');
             }
             else{
                 router.push('/login');
