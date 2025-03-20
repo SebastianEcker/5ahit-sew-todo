@@ -1,7 +1,7 @@
 <template>
     <div class="row d-flex justify-content-center mx-auto mt-5">
         <div class="col-6 pt-6">
-            <button @click="openPopup" class="btn btn-primary mb-3">Create Category</button>
+            <button @click="openPopup" class="btn btn-primary mb-3">Kategorie erstellen</button>
             <table class="table">
             <thead>
                 <tr>
@@ -45,8 +45,14 @@ const showPopup = ref(false);
 const isEditMode = ref(false);
 const selectedCategory = ref({ name: '', color: '#000000' });
 
-const fetchCategories = async () => {
-    const categoryResponse = await getCategoriesByUser();
+const currentFilters = ref({
+  skip: 0,
+  limit: 10000,
+  sort_by_name: 'asc'
+});
+
+const fetchCategories = async (params = {}) => {
+    const categoryResponse = await getCategoriesByUser(params);
     categoryList.value = categoryResponse.data;
     console.log(categoryList.value);
 };
@@ -64,10 +70,28 @@ const openEditPopup = (category) => {
 };
 
 const removeCategory = async (categoryId) => {
+    if (!confirm('Möchtest du diese Kategorie wirklich löschen?')) {
+        return;
+    }
     await deleteCategory(categoryId);
-    fetchCategories();
+    await fetchCategories(formatParams(currentFilters.value));
 };
 
-onMounted(fetchCategories);
+const formatParams = (params) => {
+    const searchParams = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => {
+        if (Array.isArray(value)) {
+            value.forEach((val) => searchParams.append(key, val));
+        } else if (value !== null && value !== undefined) {
+            searchParams.append(key, value);
+        }
+    });
+    return searchParams.toString();
+};
+
+
+onMounted( (async () => {
+    await fetchCategories(formatParams(currentFilters.value))
+}));
 
 </script>
