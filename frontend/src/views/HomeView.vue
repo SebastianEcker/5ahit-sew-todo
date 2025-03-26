@@ -2,7 +2,11 @@
     <div class="row d-flex justify-content-center mx-auto mt-5">
         <div class="col-6 pt-6">
             <div class="d-flex justify-content-between mb-3">
-                <button @click="openCreatePopup" class="btn btn-primary">Create Task</button>
+                <button @click="openCreatePopup" class="btn btn-primary">Aufgabe erstellen</button>
+                <TaskFilter 
+                :categories="categories" 
+                @filter-applied="handleFilterApplied" 
+                />
             </div>
             <table class="table">
             <thead>
@@ -39,8 +43,8 @@
         :initialTask="selectedTask" 
         :categories="categories"
         @close="showPopup = false" 
-        @task-created="fetchTasks" 
-        @task-updated="fetchTasks" 
+        @task-created="handleTaskCreatedOrUpdated" 
+        @task-updated="handleTaskCreatedOrUpdated" 
     />
 </template>
   
@@ -49,6 +53,7 @@ import { getTasksByUser, deleteTask } from '../api/task';
 import { getCategoriesByUser } from '../api/category';
 import { ref, onMounted } from 'vue';
 import TaskPopup from '../components/TaskPopup.vue';
+import TaskFilter from '../components/TaskFilter.vue';
 
 const taskList = ref([]);
 const categories = ref([]);
@@ -64,7 +69,7 @@ const selectedTask = ref({
 
 const currentFilters = ref({
   skip: 0,
-  limit: 1000,
+  limit: 10000,
   category_ids: [],
   end_date: null,
   completed: null,
@@ -77,8 +82,8 @@ const fetchTasks = async (params = {}) => {
     console.log(taskList.value);
 };
 
-const fetchCategories = async () => {
-    const categoryResponse = await getCategoriesByUser();
+const fetchCategories = async (params = {}) => {
+    const categoryResponse = await getCategoriesByUser(params);
     categories.value = categoryResponse.data;
     console.log(categories.value);
 };
@@ -96,8 +101,16 @@ const openEditPopup = (task) => {
 };
 
 const removeTask = async (taskId) => {
+    if (!confirm('Möchtest du diese Aufgabe wirklich löschen?')) {
+        return;
+    }
     await deleteTask(taskId);
-    fetchTasks();
+    await fetchTasks(formatParams(currentFilters.value));
+};
+
+const handleFilterApplied = (filters) => {
+  currentFilters.value = { ...filters };
+  fetchTasks(formatParams(currentFilters.value));
 };
 
 const formatParams = (params) => {
@@ -112,8 +125,18 @@ const formatParams = (params) => {
     return searchParams.toString();
 };
 
+const handleTaskCreatedOrUpdated = () => {
+  fetchTasks(formatParams(currentFilters.value));
+  showPopup.value = false; // Close the popup
+};
+
 onMounted(async () => {
-    await fetchCategories();
+    const categoryFilters = ref({
+        skip: 0,
+        limit: 10000,
+        sort_by_name: 'asc'
+    });
+    await fetchCategories(formatParams(categoryFilters.value));
     await fetchTasks(formatParams(currentFilters.value));
 });
 
