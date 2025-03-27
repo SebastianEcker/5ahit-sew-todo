@@ -11,6 +11,7 @@
             <table class="table">
             <thead>
                 <tr>
+                    <th scope="col"></th>
                     <th scope="col">#</th>
                     <th scope="col">Titel</th>
                     <th scope="col">Beschreibung</th>
@@ -22,11 +23,18 @@
             </thead>
             <tbody>
                 <tr v-for="(task, idx) in taskList" :key="idx">
+                    <td>
+                        <input 
+                            type="checkbox" 
+                            :checked="task.completed" 
+                            @change="toggleTaskCompleted(task.id)" 
+                        />
+                    </td>
                     <th scope="row">{{ idx + 1 }}</th>
                     <td>{{ task.title }}</td>
                     <td>{{ task.description }}</td>
                     <td>{{ task.end_date }}</td>
-                    <td>{{ task.completed }}</td>
+                    <td>{{ task.completed ? 'ja' : 'nein'}}</td>
                     <td>{{ task.category.name }}</td>
                     <td>
                         <button class="mr-1 btn btn-secondary" @click="openEditPopup(task)">Bearbeiten</button>
@@ -49,7 +57,7 @@
 </template>
   
 <script setup>
-import { getTasksByUser, deleteTask } from '../api/task';
+import { getTasksByUser, deleteTask, updateTaskCompleted } from '../api/task';
 import { getCategoriesByUser } from '../api/category';
 import { ref, onMounted } from 'vue';
 import TaskPopup from '../components/TaskPopup.vue';
@@ -127,7 +135,16 @@ const formatParams = (params) => {
 
 const handleTaskCreatedOrUpdated = () => {
   fetchTasks(formatParams(currentFilters.value));
-  showPopup.value = false; // Close the popup
+  showPopup.value = false;
+};
+
+const toggleTaskCompleted = async (taskId) => {
+    try {
+        await updateTaskCompleted(taskId);
+        await fetchTasks(formatParams(currentFilters.value));
+    } catch (error) {
+        console.error('Error updating task completion status:', error);
+    }
 };
 
 onMounted(async () => {

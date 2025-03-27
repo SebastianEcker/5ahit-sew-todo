@@ -3,6 +3,10 @@
         <div class="col-4 pt-6">
             <form>
                 <div class="form-group">
+                    <label for="emailField">Email</label>
+                    <input v-model="form.email" type="email" class="form-control" id="emailField">
+                </div>
+                <div class="form-group">
                     <label for="usernameField">Username</label>
                     <input v-model="form.username" type="text" class="form-control" id="usernameField">
                 </div>
@@ -27,6 +31,7 @@ import { ref } from 'vue';
 import { registerUser } from '../store/user';
 
 const form = ref({
+    email: '',
     username: '',
     password: '',
     birthday: '',
